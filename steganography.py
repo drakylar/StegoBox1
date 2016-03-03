@@ -1,27 +1,29 @@
 from PIL import Image, ImageTk
 import tkinter as tk
 import language
-from tkinter import filedialog
+from tkinter import filedialog, SE
+
 def main():
     languageChoose()
     createWindows()
-    root.mainloop()
-
+    imageWindow.mainloop()
 def createWindows():
     """
     creating window of size x,y
     """
-    global root
-    root = tk.Tk()
+    global imageWindow
+    imageWindow = tk.Tk()
+    imageWindow.title(u'StegoBox')
     menu()
+    preview()
 
 def languageChoose():
     global lang
     lang = language.ru
 
 def menu():
-    m = tk.Menu(root)
-    root.config(menu=m)
+    m = tk.Menu(imageWindow)
+    imageWindow.config(menu=m)
     """меню Файл"""
     fm = tk.Menu(m)
     m.add_cascade(label=lang[0],menu=fm)
@@ -29,6 +31,13 @@ def menu():
     fm.add_command(label=lang[2])
     fm.add_command(label=lang[3])
     fm.add_command(label=lang[4])
+    """меню фильтры"""
+    filterMenu = tk.Menu(m)
+    m.add_cascade(label=lang[14],menu=filterMenu)
+    filterMenu.add_command(label=lang[15])
+    filterMenu.add_command(label=lang[16])
+
+
     """меню Помощь"""
     hm = tk.Menu(m)
     m.add_cascade(label=lang[5],menu=hm)
@@ -49,17 +58,43 @@ def imageChoose():
     images = ["bmp","png","jpg","gif"]
     if filename.name.lower()[-3:] in images:
         openedPicture = filename.name
-        showImage()
+        showOriginalImage()
 
-def showImage():
-    global ImageLabel
+def showOriginalImage():
+    global ImageLabel,originalImage,changedImage
     if 'ImageLabel' in globals(): ImageLabel.destroy()
-    image = Image.open(openedPicture)
-    photo = ImageTk.PhotoImage(image)
+    originalImage = Image.open(openedPicture)
+    photo = ImageTk.PhotoImage(originalImage)
     ImageLabel = tk.Label(image=photo)
     ImageLabel.image = photo
     ImageLabel.pack()
-    root.mainloop()
+    changePreview(originalImage)
+    imageWindow.mainloop()
 
 
+def preview():
+    global previeWindow
+    previeWindow = tk.Toplevel()
+    previeWindow.title(u'Preview')
+    previeWindow.geometry('270x180+1000+0')
+
+def changePreview(changedImage):
+    global image,showPreview
+    if 'showPreview' in globals(): showPreview.destroy()
+    width, height = changedImage.size
+    x = 1
+    success = 0
+    while not success:
+        if width//x<=270 and height//x<=180:
+            success=1
+            width = width//x
+            height = height//x
+        else:
+            x+=1
+        print(x)
+    previewImage = changedImage.resize((width, height), Image.ANTIALIAS)
+    photo = ImageTk.PhotoImage(previewImage)
+    showPreview = tk.Label(previeWindow,image=photo)
+    showPreview.image = photo
+    showPreview.pack()
 main()
