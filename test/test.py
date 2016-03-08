@@ -1,33 +1,13 @@
-from PIL import Image, ImageTk
-import tkinter as tk
-import time
-from tkinter import filedialog, SE, messagebox
+import numpy
+from PIL import Image
+from PIL import ImageChops
+im_and = ImageChops.lighter
 
-root = tk.Tk()
-
-def alert(text):
-    messagebox.showinfo(text, text)
-    root.mainloop()
+im = Image.open('/Users/iljashaposhnikov/Desktop/python/Steganogaphy/test/image.jpg')
 
 
-firstFilter = tk.Checkbutton(root,
-                                     text = '11111',
-                                     onvalue = 1,
-                                     offvalue = 0,
-                                     height = 21,
-                                     width = 168,
-                                     command = alert('1234')
-                                 )
-
-
-root.mainloop()
-
-
-
-
-"""
-image = Image.open("/Users/iljashaposhnikov/Desktop/python/Steganogaphy/test/large.jpg")
-photo = ImageTk.PhotoImage(image)
-label = tk.Label(image=photo)
-label.image = photo # keep a reference!
-label.pack()"""
+pix = im.load()
+for x in range(100):
+    for y in range(100):
+        pix[x,y]=(0,0,0)
+im.show()
